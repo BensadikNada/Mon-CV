@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Bensadik Nada / Portfolio</title>
+</head>
+
+<body>
+    <div class="about-me-right">
+        <img src="" alt="profile">
+        <h1>Bensadik Nada</h1>
+        <h2>Dévelopement Web / Full Stack</h2>
+        <p>Diplômé en tant que technicienne spécialisé en développement digital, option full stack, je suis passionné
+            par le monde du numérique. Déterminé à continuer d'apprendre et à progresser dans ce domaine, je m'investis
+            pleinement pour atteindre des résultats de qualité et élargir constamment mes compétences.</p>
+        <a href="Bensadik Nada.pdf" target="_blank" download>Télècharger mon CV <i class="fa-solid fa-download"></i></a>
+    </div>
+    <div class="about-me-left">
+        <div class="competence">
+            <h1>Mes compétences</h1>
+            <hr>
+            <i style="color: #e34c26;" class="fa-brands fa-html5"></i>
+            <i style="color: #2965f1;" class="fa-brands fa-css3-alt"></i>
+            <i style="color: #6f1bee;" class="fa-brands fa-bootstrap"></i>
+            <i style="color: #f7df1e;" class="fa-brands fa-js"></i>
+            <i style="color: #61dafb;" class="fa-brands fa-react"></i>
+            <i style="color: #1a1a1a;" class="fa-solid fa-database"></i>
+            <i style="color: #306998;" class="fa-brands fa-python"></i>
+            <i style="color: #8993be;" class="fa-brands fa-php"></i>
+            <i style="color: #ff2d20;" class="fa-brands fa-laravel"></i>
+            <i style="color: #21759b;" class="fa-brands fa-wordpress"></i>
+            
+        </div>
+        <div class="service">
+            <h1>Mes services</h1>
+            <hr>
+            <ul>
+                <li>Dévelopement Front-End</li>
+                <li>Dévelopement Back-End</li>
+                <li>Dévelopement Cloud</li>
+                <li>Structure et verification du code</li>
+            </ul>
+        </div>
+        <div class="experience">
+            <h1>Expériences</h1>
+            <hr>
+            <h3>Formation en Développement Web et Gestion de Projets Numériques</h3>
+            <p>J'ai suivi une formation en développement web axée sur Next.js, Tailwind CSS, et WordPress. J'ai appris à
+                utiliser des outils comme ACF et Gutenberg pour améliorer la fonctionnalité des sites et j'ai renforcé
+                mes compétences en télétravail et en gestion de projets numériques.</p>
+            <h3>Première Expérience en Conception Web sur WordPress</h3>
+            <p>Ma première expérience professionnelle dans le domaine de la création web a été la conception et le
+                développement d'une section dédiée au recrutement d'entreprises, entièrement réalisée sur la plateforme
+                WordPress. J'ai entrepris ce projet avec enthousiasme et détermination, cherchant à exploiter les
+                fonctionnalités puissantes de WordPress pour créer une interface dynamique et conviviale.</p>
+        </div>
+        <div class="contact">
+            <h1>Contacter avec moi</h1>
+            <hr>
+            <form id="contactForm">
+                <label for="fullName">Votre Nom Complet</label>
+                <input type="text" name="fullName" id="fullName" required>
+                <label for="tele">Telephone</label>
+                <input type="tel" name="tele" id="tele" required>
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" required>
+                <label for="sujet">Sujet</label>
+                <input type="text" name="sujet" id="sujet" required>
+                <label for="message">Votre message</label>
+                <textarea name="message" id="message" required></textarea>
+                <button type="submit">Envoyer Message</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        document.getElementById('contactForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            // Form data
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                tele: document.getElementById('tele').value,
+                email: document.getElementById('email').value,
+                sujet: document.getElementById('sujet').value,
+                message: document.getElementById('message').value
+            };
+
+            // GitHub API details
+            const repoOwner = "BensadikNada";
+            const repoName = "portfolio";
+            const filePath = "message.json";
+            const token = "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";
+
+            try {
+                // Get the current file SHA
+                const getFileResponse = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: "application/vnd.github.v3+json"
+                    }
+                });
+
+                const fileData = await getFileResponse.json();
+                const sha = fileData.sha;
+
+                // Update JSON content
+                const updatedContent = JSON.stringify([...JSON.parse(atob(fileData.content)), formData], null, 2);
+                const base64Content = btoa(updatedContent);
+
+                // Update the file on GitHub
+                const updateResponse = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`, {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        Accept: "application/vnd.github.v3+json"
+                    },
+                    body: JSON.stringify({
+                        message: "Updated message.json with new form data",
+                        content: base64Content,
+                        sha: sha
+                    })
+                });
+
+                if (updateResponse.ok) {
+                    alert("Message sent successfully!");
+                } else {
+                    const error = await updateResponse.json();
+                    console.error(error);
+                    console.log("Failed to send the message. Check the console for details.");
+                }
+            } catch (error) {
+                console.error(error);
+                console.log("An error occurred while sending the message.");
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -33,6 +33,11 @@ h1, h2, h3 {
     text-align: left;
 }
 
+.personal{
+    display: flex;
+    gap: 20px;
+}
+
 /* About Me Section */
 .about-me-right {
     background: linear-gradient(135deg, #50228c, #9d5cff);
